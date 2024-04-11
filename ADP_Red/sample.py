@@ -1,4 +1,4 @@
-# %% 
+# %% 0. Import Libaries
 # !conda install numpy
 # !conda install pandas
 import numpy as np
@@ -87,11 +87,12 @@ else: #
 print(stats.ttest_rel(df.after, df.before, alternative='greater'))
 
 # %% 3. independent-sample t-test
-# 독립표본 t검정을 시행할 때 등분산성 가정을 신경써서 Levene test를 수행할 필요는 없다.
+# Independent sample t-test를 시행할 때 
+# 등분산성 확인을 위해 Levene test 등을 수행할 필요는 없다.
 # 등분산성 가정을 만족하든, 만족하지 않든 Welch's t-test를 수행하면 된다.
+# 단, 정규성 조건은 여전히 유효하다.
 
 # [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test)
-# Welch의 t-test는 두 집단 등분산 가정은 없어도 되지만, 정규성 조건은 여전히 유지되어 있다.
 
 df = pd.read_csv('../ADP_Python/data/cats.csv')
 dv = 'Bwt'
