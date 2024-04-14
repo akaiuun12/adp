@@ -87,12 +87,13 @@ else: #
 print(stats.ttest_rel(df.after, df.before, alternative='greater'))
 
 # %% 3. independent-sample t-test
+# [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test)
 # Independent sample t-test를 시행할 때 
 # 등분산성 확인을 위해 Levene test 등을 수행할 필요는 없다.
 # 등분산성 가정을 만족하든, 만족하지 않든 Welch's t-test를 수행하면 된다.
-# 단, 정규성 조건은 여전히 유효하다.
+# (오히려 등분산성을 미리 확인하고 Student's t-test와 Welch's t-test를 고르는 것을 경계해야 한다.)
 
-# [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test)
+# ★ 단, 정규성 조건은 여전히 유효하다.
 
 df = pd.read_csv('../ADP_Python/data/cats.csv')
 dv = 'Bwt'

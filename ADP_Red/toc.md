@@ -66,8 +66,9 @@
 1. GLM (General Linear Model)
 1. t-test (one-sample, paired, ind-sample)
 1. ANOVA (one-way, two-way)
-1. Linear Regression
-1. Logistic Regression
+1. Simple & Multiple Regression
+1. Multinomial Regression
+1. Logistic & Softmax Regression
 1. *correlation analysis*
 1. chi-squared test
 1. *cross-tabulation analysis*
