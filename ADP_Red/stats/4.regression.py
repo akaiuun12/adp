@@ -33,7 +33,7 @@ lm = smf.ols(
 ).fit()
 
 lm.rsquared
-lm.rsquared_sdj
+lm.rsquared_adj
 lm.params
 lm.pvalues
 
@@ -61,3 +61,7 @@ print(f'''
     {lm.intercept_}
     {lm.coef_}
 ''')
+
+# %% 5. Evaluation
+
+
