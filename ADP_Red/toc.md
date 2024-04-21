@@ -24,7 +24,8 @@
 1. mean centering
 1. one-hot encoding
 1. train-test split
-1. dimensionality recution (PCA)
+1. dimensionality reduction (PCA)
+1. data imbalance problem: oversampling & undersampling
 
 ### 1-3. Data Visualization
 1. **matplotlib** [finished]

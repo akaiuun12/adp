@@ -7,21 +7,17 @@ import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
-plt.style.use('seaborn-whitegrid')
-
-# %% 
 # data encoding type: 'utf-8', 'euc-kr'
-df = pd.read_csv('../../ADP_Python/data/arima_data.csv', names=['day', 'price'])
+df = pd.read_csv('../../ADP_Python/data/서울특별시 코로나19.csv')
+date_column = '날짜'
 
+# Check data properties
 print(df.head())
-
-# Check data size and datatype
 print(df.info())
 
-# Change datatype to datetime
-# df['day'] = df.day.astype('datetime64[ns]')
-df['day'] = pd.to_datetime(df['day'], format='%Y-%m-%d')
-df.set_index('day', inplace=True)
+# # Change datatype to datetime
+df[date_column] = pd.to_datetime(df[date_column], format='%Y-%m-%d')
+df.set_index(date_column, inplace=True)
 
 print(df.dtypes)
 print(df.head())
@@ -35,6 +31,7 @@ plt.show()
 # (Trend, Seasonality, Residual)
 # - 'additive'
 # - 'multiplicative'
+
 from statsmodels.tsa.seasonal import seasonal_decompose
 
 decomp_add = seasonal_decompose(df, model='additive')
