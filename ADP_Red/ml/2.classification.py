@@ -28,13 +28,13 @@ print(df.isna().sum())
 
 
 # %% 3. 라벨 인코딩
-# from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder
 
-# label = ['gender']
+label = ['gender', 'class']
 
-# df[label] = df[label].apply(LabelEncoder().fit_transform)
-df['gender'] = np.where(df['class']=='M', 0, 1)
-df['class'] = np.where(df['class']=='A', 1, 0)
+df[label] = df[label].apply(LabelEncoder().fit_transform)
+# df['gender'] = np.where(df['class']=='M', 0, 1)
+# df['class'] = np.where(df['class']=='A', 1, 0)
 
 print(df.info())
 print(df.head())
@@ -103,65 +103,72 @@ print('y_test: ', y_test.shape)
 # %% 8. 모델 학습
 from sklearn.linear_model import LogisticRegression
 
-logisticReg = LogisticRegression(random_state=45)
-logisticReg.fit(X_train, y_train)
+# model = LogisticRegression()                                            # Logistic Regression
+model = LogisticRegression(multi_class='multinomial', solver='lbfgs')   # Softmax Regression
+model.fit(X_train, y_train)
 
 
-# # %%
-# proba = pd.DataFrame(logisticReg.predict_proba(X_train))
-# cs = logisticReg.decision_function(X_train)
+# %% 9. 모델 학습 (2)
+# import statsmodels.api as sm
+# import statsmodels.formula.api as smf
+# dv = 'class'
 
-# df = pd.concat([proba, pd.DataFrame(cs)], axis=1)
-# df.columns = ['Not A', 'A', 'Decision Function']
+# model = smf.glm(
+#     data=df, formula="class~age+height_cm+weight_kg", 
+#     family=sm.families.Binomial()
+# ).fit()
 
-# df.sort_values(['Decision Function'], inplace=True)
-# df.reset_index(inplace=True, drop=True)
+# model.summary()
 
-# plt.plot(df['Decision Function'], df['Not A'], 'g--', label='Not A')
-# plt.plot(df['Decision Function'], df['A'], 'b--', label='A')
-# plt.legend()
-# plt.show()
+# %% 10. 앙상블
 
 # %% 11. 모델 평가
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.metrics import confusion_matrix, classification_report
 
-pred = logisticReg.predict(X_test)
+pred = model.predict(X_test)
+pred_proba = model.predict_proba(X_test)
 
-print(f'Model Accurary {mean_absolute_error(pred, y_test)}')
-print(f'Model Accurary {mean_squared_error(pred, y_test)}')
+print(f'MAE {mean_absolute_error(pred, y_test)}')
+print(f'MSE {mean_squared_error(pred, y_test):.2f}')
+print(f'RMSE {np.sqrt(mean_squared_error(pred, y_test)):.2f}')
 
 print(f'혼동행렬: {confusion_matrix(pred, y_test)}')
+
 print(f'정확도: {accuracy_score(pred, y_test) * 100 :.2f} % ')
-print(f'정밀도: {precision_score(pred, y_test) * 100 :.2f} % ')
-print(f'재현율: {recall_score(pred, y_test) * 100 :.2f} % ')
+# print(f'정밀도: {precision_score(pred, y_test) * 100 :.2f} % ')
+# print(f'재현율: {recall_score(pred, y_test) * 100 :.2f} % ')
+# print(f'F1   : {f1_score(pred, y_test) * 100 :.2f} % ')
 
-print(f'F1   : {f1_score(pred, y_test) * 100 :.2f} % ')
+# ROC Curve
+# from sklearn.metrics import RocCurveDisplay
 
+# RocCurveDisplay.from_estimator(model, X_test, y_test)
+# plt.show()
 
-# %%
-from sklearn.metrics import RocCurveDisplay
-
-RocCurveDisplay.from_estimator(logisticReg, X_test, y_test)
-plt.show()
 
 # %% 12. 하이퍼파라미터 튜닝
-from sklearn.model_selection import GridSearchCV
+# from sklearn.model_selection import GridSearchCV
 
-parameters = {'n_estimators':[50,100], 'max_depth':[4,6]}
-model4 = RandomForestClassifier()
-clf = GridSearchCV(estimator=model4, param_grid=parameters, cv=3)
-clf.fit(X_train, y_train)
+# parameters = {'n_estimators':[50,100], 'max_depth':[4,6]}
+# model4 = RandomForestClassifier()
+# clf = GridSearchCV(estimator=model4, param_grid=parameters, cv=3)
+# clf.fit(X_train, y_train)
 
-print(f'Best Parameter: {clf.best_params_}')
+# print(f'Best Parameter: {clf.best_params_}')
 
 
 # %% 13. 예측값 저장
 # Save Output
-output = pd.DataFrame({'id': y_test.index, 'pred': pred3})
-output.to_csv('00300.csv', index=False)
+output = pd.DataFrame({'id': y_test.index, 'pred': pred})
+output.to_csv('output.csv', index=False)
 
 # Check Output
-check = pd.read_csv('00300.csv')
+check = pd.read_csv('output.csv')
 check.head()
+
+
+# %% References
+# - [[딥러닝] 로지스틱 회귀](https://circle-square.tistory.com/94)
+# - [Logistic Regression in Python with statsmodels](https://www.andrewvillazon.com/logistic-regression-python-statsmodels/)
