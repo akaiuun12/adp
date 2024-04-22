@@ -1,10 +1,49 @@
-# %% sample_test_1_ml.py
+# %% 제4회 기출동형 모의고사 - 통계분석 (50점)
+
+# %% 1. 한공장에서 생산된 제품에서 최근 추정 불량률은 90%였다. 오차의 한계가 5% 이하가 되도록 하는 최소 표본 사이즈를 구하시오.
 
 
-# %% 1.
+# %% 2. 다음은 1월부터 9월까지의 은의 가격이다. 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# %% 2. 코로나 시계열 데이터로 다음을 수행하시오
-# %% 0. Load Libraries and Dataset
+plt.rc('font', family='Batang')
+
+date = [1,2,3,4,5,6,7,8,9]
+value = [12.14, 42.6, 34.4, 35.29, 30.96, 57.12, 37.84, 42.49, 31.38]
+
+df = pd.DataFrame(value, index=date)
+df
+
+# 2-1. 은의 가격 및 이동평균값 3이 설정된 시계열 그래프를 그리시오. 
+ma3 = []
+for i in range(df.shape[0]):
+    if i < 2:
+        ma3.append(0)
+    else:
+        ma3.append(np.mean(df.iloc[i-2:i][0]))
+df['MA3'] = ma3
+
+plt.plot(df)
+plt.title('은 가격 (1월 ~ 9월)')
+plt.show()
+
+# 2-2. 1월 대비 9월의 은의 가격은 몇 %올랐는가? 소수점 두번째 자리에서 반올림.
+rate = float(df.loc[9][0] / df.loc[1][0] - 1)
+print(f'1월 대비 9월 은의 가격은 {rate * 100: .1f}% 상승함.')
+
+
+# %% 3. 아래 그래프는 A, B, C 자치구별 H의원에 대한 찬성, 반대 투표 결과이다. 자치구별 지지율이 같은지에 대해서 검정하시오.
+
+
+# %% 4. A학교 남녀 학생들의 평균 혈압 차이가 있는지 여부에 대한 검정하시오. 
+# 4-1. 남녀 학생들의 평균 혈압 차이가 있는지에 대해 가설을 설정하시오.
+# A: 
+# H0 - 남녀 학생들의 평균 혈압 차이가 존재할 것이다.
+# H1 - 남녀 학생들의 평균 혈압 차이가 존재하지 않을 것이다. 
+
+# 4-2. 검정통계량을 구하고 판단하시오.
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -12,112 +51,49 @@ import matplotlib.pyplot as plt
 
 import scipy.stats as stats
 
-# data encoding type: 'utf-8', 'euc-kr'
-df = pd.read_csv('../../ADP_Python/data/서울특별시 코로나19.csv')
-date_column = '날짜'
+df = pd.read_csv('../../ADP_Python/data/26_problem6.csv')
+dv = 'pressure'
+iv = 'gender'
+conditions = {'A':'male', 'B':'female'}
 
-# Check data properties
-print(df.head())
-print(df.info())
+group_A = df[df[iv] == conditions['A']]
+group_B = df[df[iv] == conditions['B']]
 
-# # Change datatype to datetime
-df[date_column] = pd.to_datetime(df[date_column], format='%Y-%m-%d')
-df.set_index(date_column, inplace=True)
+# 3-2. Visualization
+fig, axes = plt.subplots(nrows=2, ncols=1)
 
-print(df.dtypes)
-print(df.head())
-
-# EDA Visualization
-plt.plot(df)
+sns.histplot(group_A[dv], bins=15, ax=axes[0])
+sns.histplot(group_B[dv], bins=15, ax=axes[1])
+plt.tight_layout
 plt.show()
 
+# 3-3. Statistical Test
+print(stats.ttest_ind(group_A[dv], group_B[dv], equal_var=True))
 
-# %% 1. Time Series Decomposition 
-# (Trend, Seasonality, Residual)
-# - 'additive'
-# - 'multiplicative'
+print(f'Group A Mean: {group_A[dv].mean()}')
+print(f'Group B Mean: {group_B[dv].mean()}')
 
-# from statsmodels.tsa.seasonal import seasonal_decompose
-
-# decomp_add = seasonal_decompose(df, model='additive')
-# decomp_mul = seasonal_decompose(df, model='multiplicative')
-
-# decomp_add.plot()
-# decomp_mul.plot()
-# plt.show()
+# Welch's t-test를 수행한 결과 p-value = 0.19로 귀무가설을 기각할 수 없다.
+# 따라서 남녀 학생들의 평균 혈압 차이는 통계적으로 유의미하지 않다.
 
 
-# %% 2. Stationarize the Series
-# %% 2-1. Durbin-Watson Test
-from statsmodels.stats.stattools import durbin_watson
+# 4-3. 검정통계량을 구하고 판단하시오.
+import statsmodels.formula.api as smf
 
-print(durbin_watson(df))
+model = smf.ols(
+    data=df, formula=f'{dv} ~ 1 + {iv}'
+).fit()
 
-# %% 2-2. Augmented Dickey-Fuller Test (d)
-# Stationary Test
-from statsmodels.tsa.stattools import adfuller
+print(model.summary())
 
-# train, test data split
-df_train = df[:'2016-12-01']
-df_test = df.drop(df_train.index)
+# 해당 데이터의 신뢰구간은 [-2.635, 13.228]이다. 
+# 0값이 신뢰구간 내에 포함되기 때문에 두 집단의 차이가 통계적으로 유의미하다는 결론을 내릴 수 없으며
+# 이는 검정통계량을 사용한 판단과 일치한다. 
 
-print(df_train)
-print(df_test)
+# %% 5. height(키), weight(몸무게), waist(허리둘레) 컬럼을 가진 problem7.csv 파일을 가지고 다음을 분석하시고.
+# A시의 20대 남성 411명을 임의로 추출한 후 키, 몸무게, 허리둘레를 조사하여 기록한 데이터이다. 
+# 이 데이터를 이용하여 20대 남성의 키와 허리둘레가 체중에 영향을 미치는지 알아보시오.
 
-adf = adfuller(df_train, regression='ct')
+# 5-1. 아래 조건을 참고하여 회귀 계수 (반올림하여 소수점 두자리)를 구하시오.
 
-print(f'ADF Statistic: {adf[0]}')
-print(f'p-value: {adf[1]}')
-
-if adf[1] < 0.05:
-    print('stationary time-series data')
-else:
-    print('WARNING: non-stationary time-serie data')
-    print('WARNING: differentiation or log transformation needed')
-
-# %% 2-3. Differentiation
-# First-order differentiation
-df_diff1 = df.diff(1)
-df_diff1 = df_diff1.dropna()
-
-df_diff1.plot()
-plt.show()
-
-adf1 = adfuller(df_diff1)
-
-print(f'ADF Statistic: {adf1[0]}')
-print(f'p-value: {adf1[1]}')
-
-# Second-order differentiation
-df_diff2 = df.diff(2)
-df_diff2 = df_diff2.dropna()
-
-df_diff2.plot()
-plt.show()
-
-adf2 = adfuller(df_diff2)
-
-print(f'ADF Statistic: {adf2[0]}')
-print(f'p-value: {adf2[1]}')
-
-# 2-3. Log Transformation
-# 2-4. Box-Cos Transformation
-
-
-# %% 3. Plot ACF/PACF Charts and Find Optimal Parameters
-from statsmodels.tsa.stattools import acf, pacf
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-
-# %% 3-1. AR (Auto Regressive) Model: AR(p)
-# PACF (p)
-plot_pacf(df_diff1)
-plt.show()
-
-print(pacf(df_diff1))
-
-# %% 3-2. MA (Moving Average) Model: MA(q)
-# ACF (q)
-plot_acf(df_diff1)
-plt.show()
-
-print(acf(df_diff1))
+# 5-2. 위에서 만든 모델을 바탕으로 키 180cm, 허리둘레 85cm인 남성의 몸무게를 추정하시오.
