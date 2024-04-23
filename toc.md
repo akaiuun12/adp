@@ -72,6 +72,7 @@
 1. chi-squared test
 1. *cross-tabulation analysis*
 1. Mixed Effect Model
+1. Experiment Design
 
 ### 2-2. Bayesian
 1. **pymc3**
