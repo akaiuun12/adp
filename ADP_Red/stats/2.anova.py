@@ -113,6 +113,11 @@ tukeyhsd.plot_simultaneous()
 
 print(tukeyhsd.summary())
 
+from statsmodels.graphics.factorplots import interaction_plot
+interaction_plot(x=df2_sample['cyl'], trace=df2_sample['am'], response=df2_sample['mpg'],
+                 colors=['red', 'blue'], markers=['D', 'o'])
+
+plt.show()
 # 12. 하이퍼파라미터 튜닝
 # 13. 예측값 저장
 # References
