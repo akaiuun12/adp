@@ -1,123 +1,32 @@
-# %% sample_test_1_ml.py
-
-
-# %% 1.
-
-# %% 2. 코로나 시계열 데이터로 다음을 수행하시오
-# %% 0. Load Libraries and Dataset
+# %% 제4회 기출동형 모의고사 - 머신러닝
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-import scipy.stats as stats
+df = pd.read_csv('../../ADP_Python/data/26_problem1.csv')
 
-# data encoding type: 'utf-8', 'euc-kr'
-df = pd.read_csv('../../ADP_Python/data/서울특별시 코로나19.csv')
-date_column = '날짜'
-
-# Check data properties
-print(df.head())
 print(df.info())
 
-# # Change datatype to datetime
-df[date_column] = pd.to_datetime(df[date_column], format='%Y-%m-%d')
-df.set_index(date_column, inplace=True)
+# %% 1. 데이터 전처리 및 군집생성
+# 1-1. 결측치를 확인하고 결측치를 제거하시오.
+print(df.isna().sum())
+df['Income'].fillna(df['Income'].median(), inplace=True)
 
-print(df.dtypes)
-print(df.head())
+# 총 2240개 데이터 중 24개 데이터의 Income 값에 결측치가 존재한다.
+# 결측치를 처리하기 위해서는 결측치가 포함된 데이터를 삭제하는 방법과, 다른 값으로 대체하는 방법이 있다. 
+# 본 분석에서는 Income 변수의 특성을 고려하여 중간값으로 대체하는 방식으로 결측치를 제거하였다.
 
-# EDA Visualization
-plt.plot(df)
+# 1-2. 이상치를 제거하는 방법을 서술하고 이상치 제거 후 결과를 통계적으로 나타내시오.
+sns.boxplot(df.drop(['ID', 'Income', 'Marital_Status'], axis=1))
 plt.show()
 
-
-# %% 1. Time Series Decomposition 
-# (Trend, Seasonality, Residual)
-# - 'additive'
-# - 'multiplicative'
-
-# from statsmodels.tsa.seasonal import seasonal_decompose
-
-# decomp_add = seasonal_decompose(df, model='additive')
-# decomp_mul = seasonal_decompose(df, model='multiplicative')
-
-# decomp_add.plot()
-# decomp_mul.plot()
-# plt.show()
+# 1-3. 위에서 전처리한 데이터로 Kmeans, DBSCAN 등의 방법으로 군집을 생성하시오.
 
 
-# %% 2. Stationarize the Series
-# %% 2-1. Durbin-Watson Test
-from statsmodels.stats.stattools import durbin_watson
+# %% 2. 군집분석
+# 2-1. 위에서 생성한 군집들의 특성을 분석하시오. 
 
-print(durbin_watson(df))
+# 2-2. 각 군집별 상품을 추천하시오.
 
-# %% 2-2. Augmented Dickey-Fuller Test (d)
-# Stationary Test
-from statsmodels.tsa.stattools import adfuller
-
-# train, test data split
-df_train = df[:'2016-12-01']
-df_test = df.drop(df_train.index)
-
-print(df_train)
-print(df_test)
-
-adf = adfuller(df_train, regression='ct')
-
-print(f'ADF Statistic: {adf[0]}')
-print(f'p-value: {adf[1]}')
-
-if adf[1] < 0.05:
-    print('stationary time-series data')
-else:
-    print('WARNING: non-stationary time-serie data')
-    print('WARNING: differentiation or log transformation needed')
-
-# %% 2-3. Differentiation
-# First-order differentiation
-df_diff1 = df.diff(1)
-df_diff1 = df_diff1.dropna()
-
-df_diff1.plot()
-plt.show()
-
-adf1 = adfuller(df_diff1)
-
-print(f'ADF Statistic: {adf1[0]}')
-print(f'p-value: {adf1[1]}')
-
-# Second-order differentiation
-df_diff2 = df.diff(2)
-df_diff2 = df_diff2.dropna()
-
-df_diff2.plot()
-plt.show()
-
-adf2 = adfuller(df_diff2)
-
-print(f'ADF Statistic: {adf2[0]}')
-print(f'p-value: {adf2[1]}')
-
-# 2-3. Log Transformation
-# 2-4. Box-Cos Transformation
-
-
-# %% 3. Plot ACF/PACF Charts and Find Optimal Parameters
-from statsmodels.tsa.stattools import acf, pacf
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-
-# %% 3-1. AR (Auto Regressive) Model: AR(p)
-# PACF (p)
-plot_pacf(df_diff1)
-plt.show()
-
-print(pacf(df_diff1))
-
-# %% 3-2. MA (Moving Average) Model: MA(q)
-# ACF (q)
-plot_acf(df_diff1)
-plt.show()
-
-print(acf(df_diff1))
+# 2-3. ID가 10870인 고객을 대상으로 상품을 추천하시오.
