@@ -29,8 +29,10 @@ model = tf.keras.Sequential([
 ])
 
 # %% 3. 모델 실행 옵션을 설정하기
+optimizer = tf.keras.optimizers.Adam(lr=0.001)
+
 model.compile(loss='categorical_crossentropy', 
-              optimizer='adam', 
+              optimizer=optimizer, 
               metrics=['accuracy'])
 
 # 모델 최적화를 위한 설정 구간입니다.

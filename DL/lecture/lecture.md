@@ -2,6 +2,11 @@
 - Single Layer Perceptron
 - ADALINE
 
+## Tensorflow
+- Tensor: Scalar, Vector, Matrix 
+- Rank, order, degree, n-dimension
+
+
 ## Activation Function
 - Step Function
 ![](images/step_function.png)
@@ -31,6 +36,8 @@ def tanh(x):
     return np.tanh(x)
 ```
 
+## Backpropagation
+
 
 
 ## Loss Function  
@@ -47,6 +54,11 @@ $$
 - RMSE(Root Mean Squares Error)
 $$
 RMSE = \sqrt{mean(SSE)} = \sqrt{\cfrac{SSE}{n}} = \sqrt{\cfrac{\sum{(y - \hat{y})^2}}{n}}
+$$
+
+- Binary Cross-entropy 
+$$
+-(y\times{log{h}} + (1-y)\times{log{(1-h)}})
 $$
 
 - Categorical Cross-entropy
@@ -96,6 +108,7 @@ plt.show()
 ## Metrics
 - Loss
 - Accuracy
+
 
 ## 지도학습 (Supervised Learning)
 

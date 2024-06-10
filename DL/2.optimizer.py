@@ -114,3 +114,9 @@ plt.savefig('images/sgd.png')
 plt.show()
 
 
+
+
+# %% 
+import tensorflow as tf
+
+print(tf.__version__)
