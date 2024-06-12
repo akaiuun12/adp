@@ -46,7 +46,7 @@ for xi, yi, ypi in zip(x, y, y_pred):
 plt.title('Ordinary Least Squares with SSE')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.savefig('images/ols_sse.png')
+plt.savefig('lecture/images/ols_sse.png')
 plt.show()
 
 # %% Gradient Descent
@@ -77,7 +77,7 @@ plt.plot(x, y_pred, color='blue')
 plt.title('Gradient Descent')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.savefig('images/gd.png')
+plt.savefig('lecture/images/gd.png')
 plt.show()
 
 
@@ -110,7 +110,7 @@ plt.plot(x, y_pred, color='blue')
 plt.title('Stochastic Gradient Descent')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.savefig('images/sgd.png')
+plt.savefig('lecture/images/sgd.png')
 plt.show()
 
 
